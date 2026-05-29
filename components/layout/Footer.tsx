@@ -1,10 +1,7 @@
-"use client";
-
-import { useState } from "react";
 import Link from "next/link";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Send, MapPin, Phone, Link2, GitBranch } from "lucide-react";
+import { NewsletterForm } from "./NewsletterForm";
+import { CURRENT_YEAR } from "./CopyrightYear";
 
 const servicesLinks = [
   { href: "/services/software", label: "Software Development" },
@@ -35,17 +32,6 @@ const socialLinks = [
 ];
 
 export function Footer() {
-  const [email, setEmail] = useState("");
-  const [isSubscribed, setIsSubscribed] = useState(false);
-
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email) {
-      setIsSubscribed(true);
-      setEmail("");
-      setTimeout(() => setIsSubscribed(false), 3000);
-    }
-  };
 
   return (
     <footer className="bg-primary text-white">
@@ -141,19 +127,7 @@ export function Footer() {
             {/* Newsletter */}
             <div>
               <h4 className="font-medium mb-3 text-white">Newsletter</h4>
-              <form onSubmit={handleSubscribe} className="space-y-2">
-                <Input
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-400"
-                  required
-                />
-                <Button type="submit" className="w-full" variant="secondary">
-                  {isSubscribed ? "Subscribed!" : "Subscribe"}
-                </Button>
-              </form>
+              <NewsletterForm />
             </div>
           </div>
         </div>
@@ -161,7 +135,7 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-slate-400 text-sm">
-            © {new Date().getFullYear()} Agency. All rights reserved.
+            © {CURRENT_YEAR} Agency. All rights reserved.
           </p>
 
           {/* Social Links */}

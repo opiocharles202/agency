@@ -1,189 +1,76 @@
 import Link from "next/link";
-import Image from "next/image";
-import { Calendar, Clock, User } from "lucide-react";
-import { blogPosts, getAllCategories, getFeaturedBlogPosts } from "@/lib/data/blog";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ArrowRight } from "lucide-react";
+import { BlogGrid } from "./BlogGrid";
 
 export async function generateMetadata() {
   return {
-    title: "Blog - Insights & Updates",
-    description: "Latest insights on software development, mobile apps, digital marketing, and AI from our expert team.",
+    title: "Blog | Agency",
+    description:
+      "Expert perspectives on software development, mobile apps, digital marketing, and AI from our specialist team.",
   };
 }
 
 export default function BlogPage() {
-  const categories = getAllCategories();
-  const featuredPosts = getFeaturedBlogPosts();
-  const recentPosts = [...blogPosts].sort(
-    (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
-  );
-
   return (
-    <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative py-20 lg:py-32 overflow-hidden">
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute inset-0 bg-gradient-to-br from-violet-50 via-white to-blue-50 opacity-70" />
-          <div className="absolute top-20 left-10 w-72 h-72 bg-violet-200 rounded-full blur-3xl opacity-30" />
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-200 rounded-full blur-3xl opacity-30" />
-        </div>
+    <div className="min-h-screen bg-white">
 
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <Badge variant="secondary" className="mb-6 px-4 py-1 text-sm">
+      {/* ── HERO ─────────────────────────────────────────────────── */}
+      <section className="bg-[#0A1628] py-24 lg:py-32">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-2xl">
+            <p className="text-[#00D4FF] text-sm font-semibold uppercase tracking-widest mb-4">
               Our Blog
-            </Badge>
-            <h1 className="text-4xl lg:text-6xl font-bold text-[var(--text-primary)] mb-6 tracking-tight">
+            </p>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
               Insights & Ideas
             </h1>
-            <p className="text-xl text-[var(--text-secondary)] leading-relaxed">
-              Expert perspectives on technology, marketing, and innovation
+            <p className="text-slate-300 text-lg leading-relaxed mb-8">
+              Practical perspectives on technology, design, and growth — written by the specialists who build and ship these things every day.
             </p>
+            <Link
+              href="/contact"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-[#00D4FF] hover:gap-3 transition-all"
+            >
+              Have a topic in mind? Let us know
+              <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* Featured Posts */}
-      {featuredPosts.length > 0 && (
-        <section className="py-12 pb-20">
-          <div className="container mx-auto px-4">
-            <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-8 flex items-center gap-2">
-              <span className="w-2 h-8 bg-[var(--accent)] rounded-full" />
-              Featured Articles
-            </h2>
-            <div className="grid lg:grid-cols-2 gap-8">
-              {featuredPosts.slice(0, 2).map((post) => (
-                <Link key={post.id} href={`/blog/${post.slug}`}>
-                  <Card className="group overflow-hidden border-none shadow-lg hover:shadow-xl transition-all duration-300 h-full">
-                    <div className="relative h-64 lg:h-72 overflow-hidden">
-                      <Image
-                        src={post.coverImage}
-                        alt={post.title}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                      <Badge className="absolute top-4 left-4 bg-[var(--accent)] text-[var(--primary)] hover:bg-[var(--accent)]/90">
-                        {post.category}
-                      </Badge>
-                    </div>
-                    <CardContent className="p-6">
-                      <h3 className="text-xl lg:text-2xl font-bold text-[var(--text-primary)] mb-3 group-hover:text-[var(--accent)] transition-colors line-clamp-2">
-                        {post.title}
-                      </h3>
-                      <p className="text-[var(--text-secondary)] mb-4 line-clamp-2">
-                        {post.excerpt}
-                      </p>
-                      <div className="flex items-center gap-4 text-sm text-[var(--text-secondary)]">
-                        <div className="flex items-center gap-1.5">
-                          <User className="w-4 h-4" />
-                          {post.author.name}
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                          <Calendar className="w-4 h-4" />
-                          {new Date(post.publishedAt).toLocaleDateString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                            year: "numeric",
-                          })}
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                          <Clock className="w-4 h-4" />
-                          {post.readTime} min read
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
-            </div>
+      {/* ── GRID (client — handles featured + filter) ────────────── */}
+      <BlogGrid />
+
+      {/* ── CTA ──────────────────────────────────────────────────── */}
+      <section className="py-16 lg:py-24 bg-primary relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-accent/5 to-accent-alt/5" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-accent/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-accent-alt/10 rounded-full blur-3xl" />
+
+        <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+            Ready to Start Your Project?
+          </h2>
+          <p className="text-slate-300 text-lg mb-8 max-w-xl mx-auto">
+            Turn these insights into action. Our team is ready to help you build something great.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link
+              href="/contact"
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-accent text-primary hover:bg-accent/90 transition-all duration-300 font-semibold h-12 px-8"
+            >
+              Get in Touch
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link
+              href="/services"
+              className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/20 bg-transparent text-white hover:bg-white hover:text-primary transition-all duration-300 font-semibold h-12 px-8"
+            >
+              Our Services
+            </Link>
           </div>
-        </section>
-      )}
-
-      {/* Category Filter Tabs */}
-      <section className="py-12 bg-[var(--surface)]">
-        <div className="container mx-auto px-4">
-          <Tabs defaultValue="all" className="w-full">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-              <h2 className="text-2xl font-bold text-[var(--text-primary)]">
-                Latest Posts
-              </h2>
-              <TabsList className="bg-white shadow-sm">
-                <TabsTrigger value="all">All</TabsTrigger>
-                {categories.map((category) => (
-                  <TabsTrigger key={category} value={category}>
-                    {category}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-            </div>
-
-            <TabsContent value="all" className="mt-0">
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {recentPosts.map((post) => (
-                  <BlogCard key={post.id} post={post} />
-                ))}
-              </div>
-            </TabsContent>
-
-            {categories.map((category) => (
-              <TabsContent key={category} value={category} className="mt-0">
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {blogPosts
-                    .filter((p) => p.category === category)
-                    .map((post) => (
-                      <BlogCard key={post.id} post={post} />
-                    ))}
-                </div>
-              </TabsContent>
-            ))}
-          </Tabs>
         </div>
       </section>
     </div>
-  );
-}
-
-function BlogCard({ post }: { post: (typeof blogPosts)[0] }) {
-  return (
-    <Link href={`/blog/${post.slug}`}>
-      <Card className="group overflow-hidden border-none shadow-md hover:shadow-xl transition-all duration-300 h-full flex flex-col">
-        <div className="relative h-48 overflow-hidden">
-          <Image
-            src={post.coverImage}
-            alt={post.title}
-            fill
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
-          />
-          <Badge className="absolute top-3 left-3 bg-white/90 text-[var(--text-primary)] hover:bg-white/90 backdrop-blur-sm">
-            {post.category}
-          </Badge>
-        </div>
-        <CardContent className="p-5 flex-1 flex flex-col">
-          <h3 className="text-lg font-bold text-[var(--text-primary)] mb-2 group-hover:text-[var(--accent)] transition-colors line-clamp-2">
-            {post.title}
-          </h3>
-          <p className="text-sm text-[var(--text-secondary)] mb-4 line-clamp-2 flex-1">
-            {post.excerpt}
-          </p>
-          <div className="flex items-center justify-between text-xs text-[var(--text-secondary)]">
-            <div className="flex items-center gap-1.5">
-              <Calendar className="w-3.5 h-3.5" />
-              {new Date(post.publishedAt).toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-              })}
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Clock className="w-3.5 h-3.5" />
-              {post.readTime} min
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </Link>
   );
 }

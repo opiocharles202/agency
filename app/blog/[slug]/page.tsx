@@ -1,106 +1,127 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Calendar, Clock, User, Share2, ArrowLeft, Globe, Link2, Mail } from "lucide-react";
+import { ArrowLeft, ArrowRight, Calendar, Clock, Tag } from "lucide-react";
 import { blogPosts, getBlogPostBySlug, getRelatedPosts } from "@/lib/data/blog";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ReadingProgress } from "./ReadingProgress";
 
 export async function generateStaticParams() {
-  return blogPosts.map((post) => ({
-    slug: post.slug,
-  }));
+  return blogPosts.map((post) => ({ slug: post.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const post = getBlogPostBySlug(slug);
-  
-  if (!post) {
-    return { title: "Post Not Found" };
-  }
-  
+  if (!post) return { title: "Post Not Found" };
   return {
     title: `${post.title} | Agency Blog`,
     description: post.excerpt,
+    openGraph: {
+      title: post.title,
+      description: post.excerpt,
+      images: [{ url: post.coverImage }],
+    },
   };
+}
+
+function getInitials(name: string) {
+  return name.split(" ").map((n) => n[0]).join("");
+}
+
+function formatDate(dateStr: string) {
+  return new Date(dateStr).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const post = getBlogPostBySlug(slug);
-  
-  if (!post) {
-    notFound();
-  }
-  
+  if (!post) notFound();
+
   const relatedPosts = getRelatedPosts(slug, 3);
 
   return (
-    <div className="min-h-screen">
-      {/* Navigation */}
-      <section className="py-6 bg-[var(--surface)] border-b border-[var(--border)]">
-        <div className="container mx-auto px-4">
-          <Link 
-            href="/blog" 
-            className="inline-flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"
+    <div className="min-h-screen bg-white">
+
+      {/* ── READING PROGRESS BAR (client) ─────────────────────── */}
+      <ReadingProgress />
+
+      {/* ── TOP NAV BAR ───────────────────────────────────────── */}
+      <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-slate-100">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
+          <Link
+            href="/blog"
+            className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-[#0A1628] transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            Back to Blog
+            All Articles
+          </Link>
+          <span className="text-xs font-semibold text-[#00D4FF] uppercase tracking-widest hidden sm:block">
+            {post.category}
+          </span>
+          <Link
+            href="/contact"
+            className="text-sm font-semibold text-[#0A1628] hover:text-slate-500 transition-colors"
+          >
+            Work with us →
           </Link>
         </div>
-      </section>
+      </div>
 
-      {/* Article Hero */}
-      <section className="relative py-12 lg:py-20 overflow-hidden">
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute inset-0 bg-gradient-to-br from-violet-50 via-white to-blue-50 opacity-50" />
-        </div>
-        
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto">
-            <div className="flex flex-wrap gap-3 mb-6">
-              <Badge className="bg-[var(--accent)] text-[var(--primary)] hover:bg-[var(--accent)]/90">
+      {/* ── HERO — full-bleed cover image with overlay ─────────── */}
+      <section className="relative h-[55vh] min-h-[400px] max-h-[600px] overflow-hidden">
+        <Image
+          src={post.coverImage}
+          alt={post.title}
+          fill
+          priority
+          className="object-cover"
+        />
+        {/* Dark gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10" />
+
+        {/* Title block pinned to the bottom of the image */}
+        <div className="absolute bottom-0 left-0 right-0">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
+            {/* Category + tags */}
+            <div className="flex flex-wrap items-center gap-2 mb-4">
+              <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#00D4FF] text-[#0A1628] uppercase tracking-wide">
                 {post.category}
-              </Badge>
+              </span>
               {post.tags.slice(0, 3).map((tag) => (
-                <Badge key={tag} variant="outline" className="text-xs">
+                <span
+                  key={tag}
+                  className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-white/15 text-white/90 backdrop-blur-sm"
+                >
                   {tag}
-                </Badge>
+                </span>
               ))}
             </div>
-            
-            <h1 className="text-3xl lg:text-5xl font-bold text-[var(--text-primary)] mb-6 leading-tight">
+
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight mb-5">
               {post.title}
             </h1>
-            
-            <p className="text-xl text-[var(--text-secondary)] mb-8 leading-relaxed">
-              {post.excerpt}
-            </p>
-            
-            <div className="flex flex-wrap items-center gap-6 text-sm text-[var(--text-secondary)]">
+
+            {/* Author + meta row */}
+            <div className="flex flex-wrap items-center gap-5">
+              {/* Avatar */}
               <div className="flex items-center gap-3">
-                <Avatar className="w-10 h-10">
-                  <AvatarImage src={post.author.avatar} alt={post.author.name} />
-                  <AvatarFallback className="bg-[var(--accent)] text-[var(--primary)] text-sm">
-                    {post.author.name.split(" ").map(n => n[0]).join("")}
-                  </AvatarFallback>
-                </Avatar>
+                <div className="w-9 h-9 rounded-full bg-[#00D4FF] flex items-center justify-center text-[#0A1628] font-bold text-sm flex-shrink-0">
+                  {getInitials(post.author.name)}
+                </div>
                 <div>
-                  <p className="font-medium text-[var(--text-primary)]">{post.author.name}</p>
-                  <p className="text-xs">{post.author.title}</p>
+                  <p className="text-sm font-semibold text-white">{post.author.name}</p>
+                  <p className="text-xs text-white/60">{post.author.title}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1.5 text-white/60 text-sm">
                 <Calendar className="w-4 h-4" />
-                {new Date(post.publishedAt).toLocaleDateString("en-US", {
-                  month: "long",
-                  day: "numeric",
-                  year: "numeric",
-                })}
+                {formatDate(post.publishedAt)}
               </div>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1.5 text-white/60 text-sm">
                 <Clock className="w-4 h-4" />
                 {post.readTime} min read
               </div>
@@ -109,152 +130,205 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         </div>
       </section>
 
-      {/* Cover Image */}
-      <section className="pb-12">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="relative h-[300px] lg:h-[500px] rounded-2xl overflow-hidden shadow-xl">
-              <Image
-                src={post.coverImage}
-                alt={post.title}
-                fill
-                className="object-cover"
-                priority
-              />
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* ── ARTICLE BODY ──────────────────────────────────────── */}
+      <section className="py-14 lg:py-20">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-[1fr_260px] gap-12 lg:gap-16 items-start">
 
-      {/* Article Content */}
-      <section className="py-12">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto">
-            <div className="grid lg:grid-cols-[1fr_280px] gap-12">
-              {/* Main Content */}
-              <article className="prose prose-lg max-w-none">
-                <div 
-                  className="article-content"
-                  dangerouslySetInnerHTML={{ __html: post.content }}
-                />
-                
-                {/* Share Buttons */}
-                <div className="mt-12 pt-8 border-t border-[var(--border)]">
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium text-[var(--text-primary)]">Share this article</span>
-                    <div className="flex gap-3">
-                      <ShareButton 
-                        icon={Link2} 
-                        label="LinkedIn" 
-                        href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`/blog/${post.slug}`)}`}
-                      />
-                      <ShareButton 
-                        icon={Mail} 
-                        label="Twitter" 
-                        href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(`/blog/${post.slug}`)}`}
-                      />
-                      <ShareButton 
-                        icon={Globe} 
-                        label="Share" 
-                        href={`mailto:?subject=${encodeURIComponent(post.title)}&body=${encodeURIComponent(`Check out this article: /blog/${post.slug}`)}`}
-                      />
-                    </div>
+            {/* ── Main article column ──────────────────────────── */}
+            <article id="article-body">
+              {/* Excerpt / lede */}
+              <p className="text-xl text-slate-600 leading-relaxed font-medium border-l-4 border-[#00D4FF] pl-5 mb-10">
+                {post.excerpt}
+              </p>
+
+              {/* Article HTML content */}
+              <div
+                className="article-content"
+                dangerouslySetInnerHTML={{ __html: post.content }}
+              />
+
+              {/* Tags row */}
+              <div className="mt-12 pt-8 border-t border-slate-100 flex flex-wrap items-center gap-2">
+                <Tag className="w-4 h-4 text-slate-400 flex-shrink-0" />
+                {post.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+
+              {/* Share row */}
+              <div className="mt-8 pt-6 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <span className="text-sm font-semibold text-slate-500">Share this article</span>
+                <div className="flex gap-3">
+                  <a
+                    href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`https://agency.com/blog/${post.slug}`)}`}
+                    target="_blank" rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-200 text-sm font-medium text-slate-600 hover:border-[#0A1628] hover:text-[#0A1628] transition-colors"
+                  >
+                    LinkedIn
+                  </a>
+                  <a
+                    href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(`https://agency.com/blog/${post.slug}`)}`}
+                    target="_blank" rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-200 text-sm font-medium text-slate-600 hover:border-[#0A1628] hover:text-[#0A1628] transition-colors"
+                  >
+                    X / Twitter
+                  </a>
+                </div>
+              </div>
+            </article>
+
+            {/* ── Sticky sidebar ───────────────────────────────── */}
+            <aside className="hidden lg:block sticky top-20 space-y-6">
+              {/* Author card */}
+              <div className="rounded-2xl border border-slate-100 bg-slate-50 p-5">
+                <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-4">Written by</p>
+                <div className="flex items-start gap-3 mb-3">
+                  <div className="w-11 h-11 rounded-full bg-[#0A1628] flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                    {getInitials(post.author.name)}
+                  </div>
+                  <div>
+                    <p className="font-bold text-[#0A1628] text-sm">{post.author.name}</p>
+                    <p className="text-xs text-[#00D4FF] font-medium">{post.author.title}</p>
                   </div>
                 </div>
-              </article>
-              
-              {/* Sidebar */}
-              <aside className="space-y-8">
-                {/* Author Bio */}
-                <Card className="border-none shadow-lg">
-                  <CardContent className="p-6">
-                    <h3 className="font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
-                      <User className="w-4 h-4" />
-                      About the Author
-                    </h3>
-                    <div className="flex items-start gap-4">
-                      <Avatar className="w-14 h-14">
-                        <AvatarImage src={post.author.avatar} alt={post.author.name} />
-                        <AvatarFallback className="bg-[var(--accent)] text-[var(--primary)] text-lg">
-                          {post.author.name.split(" ").map(n => n[0]).join("")}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="font-semibold text-[var(--text-primary)]">{post.author.name}</p>
-                        <p className="text-sm text-[var(--accent)] mb-2">{post.author.title}</p>
-                        <p className="text-sm text-[var(--text-secondary)]">{post.author.bio}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                {/* Tags */}
-                <Card className="border-none shadow-lg">
-                  <CardContent className="p-6">
-                    <h3 className="font-semibold text-[var(--text-primary)] mb-4">Tags</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {post.tags.map((tag) => (
-                        <Badge key={tag} variant="secondary" className="text-xs">
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </aside>
+                <p className="text-xs text-slate-500 leading-relaxed">{post.author.bio}</p>
+              </div>
+
+              {/* Reading meta */}
+              <div className="rounded-2xl border border-slate-100 bg-slate-50 p-5 space-y-3">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-slate-400">Published</span>
+                  <span className="font-medium text-[#0A1628]">{formatDate(post.publishedAt)}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-slate-400">Read time</span>
+                  <span className="font-medium text-[#0A1628]">{post.readTime} min</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-slate-400">Category</span>
+                  <span className="font-medium text-[#00D4FF]">{post.category}</span>
+                </div>
+              </div>
+
+              {/* CTA card */}
+              <div className="rounded-2xl bg-[#0A1628] p-5 text-white">
+                <p className="font-bold text-sm mb-1">Need help with this?</p>
+                <p className="text-xs text-slate-400 mb-4 leading-relaxed">
+                  Our team delivers exactly the kind of work discussed in this article.
+                </p>
+                <Link
+                  href="/contact"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#00D4FF] text-[#0A1628] text-sm font-bold hover:bg-[#00D4FF]/90 transition-colors"
+                >
+                  Get in Touch
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      {/* ── AUTHOR BIO (mobile + desktop below article) ────────── */}
+      <section className="py-10 bg-slate-50 border-y border-slate-100">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-start gap-5">
+            <div className="w-16 h-16 rounded-full bg-[#0A1628] flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
+              {getInitials(post.author.name)}
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-1">About the author</p>
+              <p className="text-lg font-bold text-[#0A1628]">{post.author.name}</p>
+              <p className="text-sm text-[#00D4FF] font-medium mb-3">{post.author.title}</p>
+              <p className="text-sm text-slate-500 leading-relaxed">{post.author.bio}</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Related Posts */}
+      {/* ── RELATED POSTS ─────────────────────────────────────── */}
       {relatedPosts.length > 0 && (
-        <section className="py-16 bg-[var(--surface)]">
-          <div className="container mx-auto px-4">
-            <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-8">
-              Related Articles
-            </h2>
-            <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-              {relatedPosts.map((relatedPost) => (
-                <Link key={relatedPost.id} href={`/blog/${relatedPost.slug}`}>
-                  <Card className="group overflow-hidden border-none shadow-md hover:shadow-xl transition-all duration-300 h-full">
-                    <div className="relative h-40 overflow-hidden">
-                      <Image
-                        src={relatedPost.coverImage}
-                        alt={relatedPost.title}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
+        <section className="py-16 lg:py-20 bg-white">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="mb-10">
+              <p className="text-[#00D4FF] text-sm font-semibold uppercase tracking-widest mb-2">Continue Reading</p>
+              <h2 className="text-2xl font-bold text-[#0A1628]">Related Articles</h2>
+            </div>
+
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {relatedPosts.map((rel) => (
+                <Link
+                  key={rel.id}
+                  href={`/blog/${rel.slug}`}
+                  className="group block rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 bg-white"
+                >
+                  <div className="relative h-44 overflow-hidden">
+                    <Image
+                      src={rel.coverImage}
+                      alt={rel.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                  </div>
+                  <div className="p-5">
+                    <span className="text-xs font-semibold text-[#00D4FF] uppercase tracking-widest block mb-2">
+                      {rel.category}
+                    </span>
+                    <h3 className="text-base font-bold text-[#0A1628] line-clamp-2 group-hover:text-slate-600 transition-colors mb-3">
+                      {rel.title}
+                    </h3>
+                    <div className="flex items-center gap-3 text-xs text-slate-400">
+                      <span>{rel.author.name}</span>
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-3 h-3" />
+                        {rel.readTime} min
+                      </span>
                     </div>
-                    <CardContent className="p-4">
-                      <Badge className="mb-2 text-xs bg-white/90 text-[var(--text-primary)]">
-                        {relatedPost.category}
-                      </Badge>
-                      <h3 className="font-semibold text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors line-clamp-2">
-                        {relatedPost.title}
-                      </h3>
-                    </CardContent>
-                  </Card>
+                  </div>
                 </Link>
               ))}
             </div>
           </div>
         </section>
       )}
-    </div>
-  );
-}
 
-function ShareButton({ icon: Icon, label, href }: { icon: React.ComponentType<{ className?: string }>; label: string; href: string }) {
-  return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="flex items-center justify-center w-10 h-10 rounded-full bg-[var(--surface)] hover:bg-[var(--accent)] hover:text-[var(--primary)] transition-colors text-[var(--text-secondary)]"
-      aria-label={`Share on ${label}`}
-    >
-      <Icon className="w-4 h-4" />
-    </a>
+      {/* ── CTA ────────────────────────────────────────────────── */}
+      <section className="py-16 lg:py-24 bg-primary relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-accent/5 to-accent-alt/5" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-accent/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-accent-alt/10 rounded-full blur-3xl" />
+
+        <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+            Ready to Put This Into Practice?
+          </h2>
+          <p className="text-slate-300 text-lg mb-8 max-w-xl mx-auto">
+            Our team builds the kind of solutions discussed in this article. Let&apos;s talk about your project.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link
+              href="/contact"
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-accent text-primary hover:bg-accent/90 transition-all duration-300 font-semibold h-12 px-8"
+            >
+              Start a Project
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link
+              href="/services"
+              className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/20 bg-transparent text-white hover:bg-white hover:text-primary transition-all duration-300 font-semibold h-12 px-8"
+            >
+              Our Services
+            </Link>
+          </div>
+        </div>
+      </section>
+    </div>
   );
 }

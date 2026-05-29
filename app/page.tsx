@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import Image from "next/image";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Code,
@@ -77,19 +77,19 @@ const portfolioItems = [
     title: "E-Commerce Platform",
     category: "Software Development",
     metric: "200% increase in sales",
-    image: "bg-gradient-to-br from-blue-500 to-purple-600",
+    image: "/portfolio-ecommerce.png",
   },
   {
     title: "Health & Fitness App",
     category: "Mobile Apps",
     metric: "500K+ downloads",
-    image: "bg-gradient-to-br from-green-500 to-teal-600",
+    image: "/portfolio-fitness.png",
   },
   {
     title: "Brand Campaign",
     category: "Marketing",
     metric: "10M impressions",
-    image: "bg-gradient-to-br from-orange-500 to-pink-600",
+    image: "/portfolio-marketing.png",
   },
 ];
 
@@ -153,10 +153,19 @@ export default function Home() {
     <main className="flex flex-col min-h-screen">
       {/* 1. Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-primary">
-        {/* Background gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary via-secondary to-primary opacity-90" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_70%,rgba(0,212,255,0.15),transparent_50%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(255,107,74,0.1),transparent_50%)]" />
+        {/* Hero background image */}
+        <Image
+          src="/hero-bg.png"
+          alt=""
+          fill
+          priority
+          className="object-cover object-center opacity-40"
+          sizes="100vw"
+        />
+        {/* Gradient overlays for readability */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-secondary/80 to-primary/90" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_70%,rgba(0,212,255,0.2),transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(255,107,74,0.15),transparent_50%)]" />
 
         {/* Abstract shapes */}
         <motion.div
@@ -191,40 +200,85 @@ export default function Home() {
             animate="visible"
             className="space-y-8"
           >
+            {/* Social proof badge */}
+            <motion.div variants={fadeInUp} className="flex justify-center">
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-accent/30 bg-accent/10 text-accent text-sm font-medium">
+                <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+                Trusted by 50+ companies worldwide
+              </span>
+            </motion.div>
+
             <motion.h1
               variants={fadeInUp}
               className="text-4xl sm:text-5xl lg:text-7xl font-bold text-white leading-tight"
             >
-              We build digital{" "}
-              <span className="text-accent">products</span> that{" "}
-              <span className="text-accent">scale</span>
+              Turn your vision into a{" "}
+              <span className="text-accent">product</span> your{" "}
+              <span className="text-accent">users love</span>
             </motion.h1>
 
             <motion.p
               variants={fadeInUp}
-              className="text-lg sm:text-xl text-slate-300 max-w-2xl mx-auto"
+              className="text-lg sm:text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed"
             >
-              Award-winning agency specializing in software, mobile apps, marketing, AI
-              & content
+              We partner with startups and enterprises to design, build, and grow
+              world-class software — from idea to launch and beyond.
             </motion.p>
+
+            {/* Problems we solve */}
+            <motion.div
+              variants={fadeInUp}
+              className="flex flex-wrap justify-center gap-3 max-w-3xl mx-auto py-2"
+            >
+              {[
+                "⚡ Slow time-to-market",
+                "🧱 Legacy tech debt",
+                "📈 Poor user engagement",
+                "🔧 Scale & performance limits",
+              ].map((problem) => (
+                <span
+                  key={problem}
+                  className="px-4 py-1.5 rounded-full bg-white/5 border border-white/10 hover:border-accent/30 hover:bg-accent/5 text-slate-300 text-sm transition-all duration-300 cursor-default"
+                >
+                  {problem}
+                </span>
+              ))}
+            </motion.div>
 
             <motion.div
               variants={fadeInUp}
               className="flex flex-col sm:flex-row items-center justify-center gap-4"
             >
-              <Button size="lg" className="bg-accent text-primary hover:bg-accent/90">
-                <Link href="/contact">Get Started</Link>
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-slate-600 text-white hover:bg-slate-800 hover:text-white"
+              <Link
+                href="/contact"
+                className="inline-flex items-center justify-center rounded-lg bg-accent text-primary hover:bg-accent/90 transition-all duration-300 font-semibold h-12 px-8"
               >
-                <Link href="/portfolio" className="flex items-center">
-                  View Our Work
-                  <ArrowRight className="ml-2 w-4 h-4" />
-                </Link>
-              </Button>
+                Start a Project
+              </Link>
+              <Link
+                href="/portfolio"
+                className="inline-flex items-center justify-center rounded-lg border border-white/20 bg-transparent text-white hover:bg-white hover:text-primary transition-all duration-300 font-semibold h-12 px-8 gap-2"
+              >
+                See Our Work
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </motion.div>
+
+            {/* Quick stats */}
+            <motion.div
+              variants={fadeInUp}
+              className="flex flex-wrap justify-center gap-8 pt-4 text-center"
+            >
+              {[
+                { value: "50+", label: "Projects delivered" },
+                { value: "98%", label: "Client satisfaction" },
+                { value: "5×", label: "Avg. ROI for clients" },
+              ].map(({ value, label }) => (
+                <div key={label}>
+                  <div className="text-2xl font-bold text-white">{value}</div>
+                  <div className="text-sm text-slate-400">{label}</div>
+                </div>
+              ))}
             </motion.div>
           </motion.div>
         </div>
@@ -259,7 +313,7 @@ export default function Home() {
             viewport={{ once: true }}
             className="flex flex-wrap items-center justify-center gap-8 md:gap-16"
           >
-            {clientLogos.map((logo, index) => (
+            {clientLogos.map((logo) => (
               <motion.div
                 key={logo}
                 variants={fadeInUp}
@@ -296,7 +350,7 @@ export default function Home() {
             viewport={{ once: true }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6"
           >
-            {services.map((service, index) => (
+            {services.map((service) => (
               <motion.div key={service.title} variants={fadeInUp}>
                 <Card className="h-full border-surface-alt hover:border-accent/50 transition-colors group">
                   <CardHeader>
@@ -355,20 +409,34 @@ export default function Home() {
             viewport={{ once: true }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
           >
-            {portfolioItems.map((item, index) => (
+            {portfolioItems.map((item) => (
               <motion.div key={item.title} variants={fadeInUp}>
-                <Card className="overflow-hidden border-0 shadow-lg group">
-                  <div className={`aspect-[4/3] ${item.image} relative`}>
-                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors" />
-                    <div className="absolute bottom-4 left-4">
-                      <span className="px-3 py-1 bg-white/90 text-primary text-xs font-medium rounded-full">
+                <Card className="overflow-hidden border border-slate-100 bg-white shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-500 group rounded-2xl pt-0 pb-0 gap-0">
+                  <div className="aspect-[4/3] relative overflow-hidden bg-slate-50">
+                    <Image
+                      src={item.image}
+                      alt={item.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      sizes="(max-w-768px) 100vw, 33vw"
+                    />
+                    <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors duration-300" />
+                    <div className="absolute bottom-4 left-4 z-10">
+                      <span className="px-3.5 py-1 bg-white/95 backdrop-blur-sm text-slate-800 text-xs font-semibold rounded-full shadow-sm border border-slate-100">
                         {item.category}
                       </span>
                     </div>
                   </div>
-                  <CardContent className="p-6">
-                    <h3 className="text-xl font-semibold text-primary mb-2">{item.title}</h3>
-                    <p className="text-accent font-medium">{item.metric}</p>
+                  <CardContent className="p-6 bg-white">
+                    <h3 className="text-xl font-bold text-slate-900 group-hover:text-accent transition-colors duration-300 mb-3">{item.title}</h3>
+                    <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-100">
+                      <span className="inline-flex items-center gap-1.5 text-accent text-xs font-bold bg-accent/5 px-3 py-1 rounded-full uppercase tracking-wider">
+                        📈 {item.metric}
+                      </span>
+                      <span className="text-xs font-semibold text-slate-400 group-hover:text-accent group-hover:translate-x-1 transition-all duration-300 flex items-center gap-1">
+                        View Case Study <ArrowRight className="w-3.5 h-3.5" />
+                      </span>
+                    </div>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -401,7 +469,7 @@ export default function Home() {
             viewport={{ once: true }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
           >
-            {whyChooseUs.map((item, index) => (
+            {whyChooseUs.map((item) => (
               <motion.div key={item.title} variants={fadeInUp}>
                 <div className="text-center">
                   <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-4">
@@ -440,7 +508,7 @@ export default function Home() {
             viewport={{ once: true }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
           >
-            {testimonials.map((testimonial, index) => (
+            {testimonials.map((testimonial) => (
               <motion.div key={testimonial.name} variants={fadeInUp}>
                 <Card className="h-full border-surface-alt">
                   <CardContent className="p-6">
@@ -513,16 +581,18 @@ export default function Home() {
               to build something amazing.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" className="bg-accent text-primary hover:bg-accent/90">
-                <Link href="/contact">Get in Touch</Link>
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-slate-600 text-white hover:bg-slate-800 hover:text-white"
+              <Link
+                href="/contact"
+                className="inline-flex items-center justify-center rounded-lg bg-accent text-primary hover:bg-accent/90 transition-all duration-300 font-semibold h-12 px-8"
               >
-                <Link href="/about">Learn More About Us</Link>
-              </Button>
+                Get in Touch
+              </Link>
+              <Link
+                href="/about"
+                className="inline-flex items-center justify-center rounded-lg border border-white/20 bg-transparent text-white hover:bg-white hover:text-primary transition-all duration-300 font-semibold h-12 px-8"
+              >
+                Learn More About Us
+              </Link>
             </div>
           </motion.div>
         </div>

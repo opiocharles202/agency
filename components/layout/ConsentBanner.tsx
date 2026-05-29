@@ -7,10 +7,8 @@ import { Cookie } from "lucide-react";
 
 const COOKIE_CONSENT_KEY = "agency-cookie-consent";
 
-type ConsentChoice = "accepted" | "declined" | null;
 
 export function ConsentBanner() {
-  const [consent, setConsent] = useState<ConsentChoice>(null);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -18,28 +16,20 @@ export function ConsentBanner() {
     const storedConsent = localStorage.getItem(COOKIE_CONSENT_KEY);
     if (!storedConsent) {
       // Show banner if no consent has been given yet
-      setTimeout(() => setIsVisible(true), 1500);
-    } else {
-      setConsent(storedConsent as ConsentChoice);
+      const timer = setTimeout(() => setIsVisible(true), 1500);
+      return () => clearTimeout(timer);
     }
   }, []);
 
   const handleAccept = () => {
     localStorage.setItem(COOKIE_CONSENT_KEY, "accepted");
-    setConsent("accepted");
     setIsVisible(false);
   };
 
   const handleDecline = () => {
     localStorage.setItem(COOKIE_CONSENT_KEY, "declined");
-    setConsent("declined");
     setIsVisible(false);
   };
-
-  // Don't render if user has already made a choice
-  if (consent === "accepted" || consent === "declined") {
-    return null;
-  }
 
   return (
     <AnimatePresence>

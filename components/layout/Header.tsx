@@ -104,6 +104,7 @@ export function Header() {
                 <nav className="flex-1 px-4 py-6 space-y-2">
                   {navLinks.map((link) => (
                     <Link
+                        key={link.href}
                         href={link.href}
                         onClick={() => setIsMobileMenuOpen(false)}
                         className={`block px-4 py-3 rounded-lg text-lg font-medium transition-colors ${

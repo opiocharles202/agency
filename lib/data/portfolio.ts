@@ -30,6 +30,7 @@ export const portfolioItems: PortfolioItem[] = [
     ],
     technologies: ["React Native", "TypeScript", "Redux", "Firebase", "AWS"],
     featured: true,
+    image: "/portfolio-fintech.png",
   },
   {
     id: "2",
@@ -47,6 +48,7 @@ export const portfolioItems: PortfolioItem[] = [
     ],
     technologies: ["Next.js", "Node.js", "PostgreSQL", "AWS", "Stripe"],
     featured: true,
+    image: "/portfolio-ecommerce.png",
   },
   {
     id: "3",
@@ -64,6 +66,7 @@ export const portfolioItems: PortfolioItem[] = [
     ],
     technologies: ["Python", "TensorFlow", "FastAPI", "AWS SageMaker"],
     featured: true,
+    image: "/portfolio-ai.png",
   },
   {
     id: "4",
@@ -81,6 +84,7 @@ export const portfolioItems: PortfolioItem[] = [
     ],
     technologies: ["Google Ads", "Meta Ads", "HubSpot", "Semrush"],
     featured: false,
+    image: "/portfolio-marketing.png",
   },
   {
     id: "5",
@@ -98,6 +102,7 @@ export const portfolioItems: PortfolioItem[] = [
     ],
     technologies: ["Premiere Pro", "After Effects", "DaVinci Resolve"],
     featured: false,
+    image: "/portfolio-video.png",
   },
   {
     id: "6",
@@ -115,6 +120,7 @@ export const portfolioItems: PortfolioItem[] = [
     ],
     technologies: ["React", "D3.js", "Node.js", "PostgreSQL", "Redis"],
     featured: false,
+    image: "/portfolio-dashboard.png",
   },
 ];
 

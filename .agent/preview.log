@@ -1,0 +1,13 @@
+
+> agency@0.1.0 dev
+> next dev
+
+▲ Next.js 16.2.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.195.40:3000
+✓ Ready in 1434ms
+
+(node:127758) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ HEAD / 200 in 2.1s (next.js: 699ms, application-code: 1408ms)
+[?25h

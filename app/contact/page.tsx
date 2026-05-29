@@ -1,39 +1,47 @@
-import Link from "next/link";
 import { ContactForm } from "@/components/contact/ContactForm";
 
 export async function generateMetadata() {
   return {
-    title: "Contact Us - Get in Touch",
-    description: "Ready to start your project? Contact us today for a free consultation.",
+    title: "Contact Us | Agency",
+    description: "Ready to start your project? Get in touch for a free consultation — we respond within 24 hours.",
   };
 }
 
 export default function ContactPage() {
   return (
-    <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative py-20 lg:py-28 overflow-hidden">
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute inset-0 bg-gradient-to-br from-cyan-50 via-white to-blue-50 opacity-70" />
-          <div className="absolute top-20 left-10 w-72 h-72 bg-cyan-200 rounded-full blur-3xl opacity-30" />
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-200 rounded-full blur-3xl opacity-30" />
-        </div>
+    <div className="min-h-screen bg-white">
 
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl lg:text-6xl font-bold text-[var(--text-primary)] mb-6 tracking-tight">
-              Get in Touch
-            </h1>
-            <p className="text-xl text-[var(--text-secondary)] leading-relaxed">
-              Have a project in mind? We&apos;d love to hear about it. Let&apos;s discuss how we can help bring your vision to life.
+      {/* ── HERO ─────────────────────────────────────────────────── */}
+      <section className="bg-[#0A1628] py-24 lg:py-32">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-2xl">
+            <p className="text-[#00D4FF] text-sm font-semibold uppercase tracking-widest mb-4">
+              Contact Us
             </p>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
+              Let&apos;s Talk About Your Project
+            </h1>
+            <p className="text-slate-300 text-lg leading-relaxed">
+              Have something in mind? Fill in the form and we&apos;ll come back to you within one business day — no sales pressure, just a straight conversation.
+            </p>
+          </div>
+
+          {/* Trust strip */}
+          <div className="mt-12 flex flex-wrap gap-6 text-sm text-slate-400">
+            {[
+              "✓ Free initial consultation",
+              "✓ Response within 24 hours",
+              "✓ No commitment required",
+            ].map((t) => (
+              <span key={t} className="font-medium">{t}</span>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Contact Section */}
-      <section className="py-12 pb-20">
-        <div className="container mx-auto px-4">
+      {/* ── FORM + INFO ──────────────────────────────────────────── */}
+      <section className="py-20 lg:py-28">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <ContactForm />
         </div>
       </section>
